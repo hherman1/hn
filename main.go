@@ -6,6 +6,7 @@ import (
 	"os"
 	"strconv"
 	"strings"
+	"sync"
 
 	"github.com/carlmjohnson/requests"
 
@@ -59,12 +60,30 @@ func run() error {
 		fmt.Printf(`%v (%vpts, %vcms)
 	by %v
 --------------------`, s.Title, s.Score, s.Descendants, s.By)
-		for idx, k := range s.Kids {
-			c, err := comments(ctx, k)
+		ss := make(map[int]string)
+		var l sync.Mutex
+		errchan := make(chan error)
+		for _, k := range s.Kids {
+			lk := k
+			go func() {
+				c, err := comments(ctx, lk)
+				if err != nil {
+					errchan<-fmt.Errorf("loading comment %v: %w", lk, err)
+				}
+				l.Lock()
+				defer l.Unlock()
+				ss[lk] = c
+				errchan <- nil
+			}()
+		}
+		for range s.Kids {
+			err := <- errchan
 			if err != nil {
-				return fmt.Errorf("loading comment %v: %w", idx, err)
+				return fmt.Errorf("subcomment: %w", err)
 			}
-			fmt.Println(c)
+		}
+		for _, k := range s.Kids {
+			fmt.Println(ss[k])
 		}
 	}
 	return nil
