@@ -129,8 +129,8 @@ func top(ctx context.Context) error {
 	}
 	close(itemsChan)
 	for idx, i := range items {
-		fmt.Printf(`%v.  %v (%vpts)
-		by %v
+		fmt.Printf(`%v.  %v
+%vpts	by %v
 		%v comments: exec://hn/comments/%v
 		%v
 `, idx+1, i.Title, i.Score, i.By, i.Descendants, i.Id, i.Url)
@@ -155,8 +155,8 @@ func comments(ctx context.Context, id int) (string, error) {
 		return "", fmt.Errorf("parse comment: %w", err)
 	}
 	_, _ = out.WriteString(fmt.Sprintf(`
->>>>- by %v (%vpts)
-%v`, s.By, s.Score, t))
+>>>>- by %v
+%v`, s.By, t))
 	
 	type result struct {s string; err error; idx int}
 	resultChan := make(chan result)
