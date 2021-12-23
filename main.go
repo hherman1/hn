@@ -90,7 +90,7 @@ func run() error {
 }
 
 
-// Top loads and prints the top 500 HN stories.
+// Top loads and prints the top 25 HN stories.
 func top(ctx context.Context) error {
 	var stories []int
 	err := requests.URL(base + "/v0/topstories.json").
@@ -100,7 +100,7 @@ func top(ctx context.Context) error {
 	if err != nil {
 		return fmt.Errorf("fetch top stories: %w", err)
 	}
-	stories = stories[:10] // for testing
+	stories = stories[:25]
 	type result struct {
 		story item
 		// Error will be set if the goroutine fetching this story failed for some reason.
