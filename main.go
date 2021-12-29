@@ -155,7 +155,7 @@ func comments(ctx context.Context, id int) (string, error) {
 		return "", fmt.Errorf("parse comment: %w", err)
 	}
 	_, _ = out.WriteString(fmt.Sprintf(`
->>>>- by %v (
+>>>>- by %v {
 %v`, s.By, t))
 
 	type result struct {s string; err error; idx int}
@@ -184,7 +184,7 @@ func comments(ctx context.Context, id int) (string, error) {
 		_, _ = out.WriteString("\n")
 		_, _ = out.WriteString(indent(ss))
 	}
-	_, _ = out.WriteString("\n)")
+	_, _ = out.WriteString("\n}")
 	return out.String(), nil
 }
 
