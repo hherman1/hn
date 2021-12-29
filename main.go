@@ -121,7 +121,7 @@ func top(ctx context.Context) error {
 			itemsChan <- result{story: s, idx: lidx}
 		}()
 	}
-	
+
 	items := make([]item, len(stories))
 	for range stories {
 		s := <- itemsChan
@@ -134,7 +134,7 @@ func top(ctx context.Context) error {
 		%v comments: exec://hn/comments/%v
 		%v
 `, idx+1, i.Title, i.Score, i.By, i.Descendants, i.Id, i.Url)
-	}	
+	}
 	return nil
 }
 
@@ -155,9 +155,9 @@ func comments(ctx context.Context, id int) (string, error) {
 		return "", fmt.Errorf("parse comment: %w", err)
 	}
 	_, _ = out.WriteString(fmt.Sprintf(`
->>>>- by %v
+>>>>- by %v (
 %v`, s.By, t))
-	
+
 	type result struct {s string; err error; idx int}
 	resultChan := make(chan result)
 	for i, id := range s.Kids {
@@ -184,6 +184,7 @@ func comments(ctx context.Context, id int) (string, error) {
 		_, _ = out.WriteString("\n")
 		_, _ = out.WriteString(indent(ss))
 	}
+	_, _ = out.WriteString("\n)")
 	return out.String(), nil
 }
 
